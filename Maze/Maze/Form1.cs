@@ -16,10 +16,11 @@ namespace Maze
     public partial class Form1 : Form
     {
         Color currentcolor = Color.White;
-        private int XTILES = 25; //Number of X tiles
-        private int YTILES = 25; //Number of Y tiles
+        private static int XTILES = 25; //Number of X tiles
+        private static int YTILES = 25; //Number of Y tiles
         private int TILESIZE = 10; //Size of the tiles (pixles)
-        private PictureBox[,] mazeTiles;
+        private static bool active = false;
+        private static PictureBox[,] mazeTiles;
         public Form1()
         {
             InitializeComponent();
@@ -74,11 +75,11 @@ namespace Maze
         private void button1_Click(object sender, EventArgs e)
         {
             //Create a previously searched array
+            active = true;
             bool[,] alreadySearched = new bool[XTILES, YTILES];
 
-            //Starts the recursive solver at tile (0,0). If false maze can not be solved.
-            if (!solveMaze(0, 0, alreadySearched))
-                MessageBox.Show("Maze can not be solved.");
+            Node first = new Node(0, 0, new List<Node>());
+            first.run();
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -88,7 +89,8 @@ namespace Maze
             {
                 for (int j = 0; j < YTILES; j++)
                 {
-                    if (mazeTiles[i, j].BackColor == Color.Gray)
+                    Color[] clean = { Color.Gray, Color.Blue, Color.Red };
+                    if (clean.Contains(mazeTiles[i, j].BackColor))
                         mazeTiles[i, j].BackColor = Color.White;
                 }
             }
@@ -97,55 +99,7 @@ namespace Maze
             mazeTiles[0, 0].BackColor = Color.LightBlue;
             mazeTiles[XTILES - 1, YTILES - 1].BackColor = Color.LightBlue;
         }
-        private bool solveMaze(int xPos, int yPos, bool[,] alreadySearched)
-        {
-            bool correctPath = false;
-            //should the computer check this tile
-            bool shouldCheck = true;
 
-            //Check for out of boundaries
-            if (xPos >= XTILES || xPos < 0 || yPos >= YTILES || yPos < 0)
-                shouldCheck = false;
-            else
-            {
-                //Check if at finish, not (0,0 and colored light blue)
-                if (mazeTiles[xPos, yPos].BackColor == Color.LightBlue && (xPos != 0 && yPos != 0))
-                {
-                    correctPath = true;
-                    shouldCheck = false;
-                }
-
-                //Check for a wall
-                if (mazeTiles[xPos, yPos].BackColor == Color.Black)
-                    shouldCheck = false;
-
-                //Check if previously searched
-                if (alreadySearched[xPos, yPos])
-                    shouldCheck = false;
-            }
-
-            //Search the Tile
-            if (shouldCheck)
-            {
-                //mark tile as searched
-                alreadySearched[xPos, yPos] = true;
-
-                //Check right tile
-                correctPath = correctPath || solveMaze(xPos + 1, yPos, alreadySearched);
-                //Check down tile
-                correctPath = correctPath || solveMaze(xPos, yPos + 1, alreadySearched);
-                //check left tile
-                correctPath = correctPath || solveMaze(xPos - 1, yPos, alreadySearched);
-                //check up tile
-                correctPath = correctPath || solveMaze(xPos, yPos - 1, alreadySearched);
-            }
-
-            //make correct path gray
-            if (correctPath)
-                mazeTiles[xPos, yPos].BackColor = Color.Gray;
-
-            return correctPath;
-        }
         public void Maze()
         {
             for (int i = 0; i < XTILES; i++)
@@ -157,6 +111,86 @@ namespace Maze
                 }
             }
             //mazeTiles[4, 23].BackColor = Color.Black;
+        }
+        public class Node
+        {
+            private List<Node> path;
+            private int xPos;
+            private int yPos;
+
+            public Node(int x, int y, List<Node>p)
+            {
+                xPos = x;
+                yPos = y;
+                path = p;
+                p.Add(this);
+            }
+
+            public void run()
+            {
+                if (active)
+                {
+                    mazeTiles[xPos, yPos].BackColor = Color.Blue;
+                    if (xPos == XTILES-1 && yPos == YTILES-1)
+                    {
+                        end();
+                    }
+                    right();
+                    top();
+                    bottom();
+                    left();
+                }
+            }
+            
+            private void right()
+            {
+                if (xPos != 24)
+                {
+                    if (!(path.Exists(r => r.xPos == this.xPos + 1) && path.Exists(r => r.yPos == this.yPos)) && mazeTiles[xPos + 1, yPos].BackColor != Color.Black)
+                    {
+                        Node neue = new Node(xPos + 1, yPos, path);
+                        neue.run();
+                    }
+                }
+            }
+            private void bottom() {
+                if (yPos != 24)
+                {
+                    if (!(path.Exists(r => r.xPos == this.xPos) && path.Exists(r => r.yPos == this.yPos + 1)) && mazeTiles[xPos, yPos + 1].BackColor != Color.Black)
+                    {
+                        Node neue = new Node(xPos, yPos + 1, path);
+                        neue.run();
+                    }
+                }
+            }
+            private void left() {
+                if (xPos != 0)
+                {
+                    if (!(path.Exists(r => r.xPos == this.xPos - 1) && path.Exists(r => r.yPos == this.yPos)) && mazeTiles[xPos - 1, yPos].BackColor != Color.Black)
+                    {
+                        Node neue = new Node(xPos - 1, yPos, path);
+                        neue.run();
+                    }
+                }
+            }
+            private void top() {
+                if (yPos != 0)
+                {
+                    if (!(path.Exists(r => r.xPos == this.xPos) && path.Exists(r => r.yPos == this.yPos - 1)) && mazeTiles[xPos, yPos - 1].BackColor != Color.Black)
+                    {
+                        Node neue = new Node(xPos, yPos - 1, path);
+                        neue.run();
+                    }
+                }
+            }
+            private void end()
+            {
+                active = false;
+                foreach (Node z in path)
+                {
+                    mazeTiles[z.xPos, z.yPos].BackColor = Color.Red;
+                }
+            }            
         }
     }
 }

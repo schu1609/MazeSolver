@@ -11,32 +11,49 @@ using System.Windows.Forms;
 namespace Maze
 {
     /// <summary>
-    /// 
+    /// the Class where the maze is created by you and where you decide big you want it to be.
     /// </summary>
     public partial class Form1 : Form
     {
+        /// <summary>
+        /// The variables that stores the path color, amount of tiles, tile sizes and the drawing object mazetiles.
+        /// </summary>
         Color currentcolor = Color.White;
         private static int XTILES = 25; //Number of X tiles
         private static int YTILES = 25; //Number of Y tiles
         private int TILESIZE = 10; //Size of the tiles (pixles)
         private static bool active = false;
         private static PictureBox[,] mazeTiles;
+        /// <summary>
+        /// The constructer which starts the components which are needed for the maze.
+        /// </summary>
         public Form1()
         {
             InitializeComponent();
             createNewMaze();
             Maze();
         }
-
+        /// <summary>
+        /// The place where you can pick the color white for the maze.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void pictureBox1_Click(object sender, EventArgs e)
         {
             currentcolor = Color.White;
         }
-
+        /// <summary>
+        /// the place where you can pick the color black for the maze.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void pictureBox2_Click(object sender, EventArgs e)
         {
             currentcolor = Color.Black;
         }
+        /// <summary>
+        /// the  playground is getting made.
+        /// </summary>
         private void createNewMaze()
         {
             mazeTiles = new PictureBox[XTILES, YTILES];
@@ -67,11 +84,21 @@ namespace Maze
                 }
             }
         }
+        /// <summary>
+        /// picturebox are the maze tiles which you can change into the color you have chosen from picturebox2 and picturebox1.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void PictureBox_Click(object sender, EventArgs e)
         {
             ((PictureBox)sender).BackColor = currentcolor;
         }
-
+        /// <summary>
+        /// button1 activates the event of the Node class which solves the maze.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// 
         private void button1_Click(object sender, EventArgs e)
         {
             //Create a previously searched array
@@ -81,7 +108,11 @@ namespace Maze
             Node first = new Node(0, 0, new List<Node>());
             first.run();
         }
-
+        /// <summary>
+        /// Removes the color which was left after using button1.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void button2_Click(object sender, EventArgs e)
         {
             //Change all greay tiles to white
@@ -99,7 +130,9 @@ namespace Maze
             mazeTiles[0, 0].BackColor = Color.LightBlue;
             mazeTiles[XTILES - 1, YTILES - 1].BackColor = Color.LightBlue;
         }
-
+        /// <summary>
+        /// method which creates the maze in code.
+        /// </summary>
         public void Maze()
         {
             for (int i = 0; i < XTILES; i++)
@@ -112,6 +145,9 @@ namespace Maze
             }
             //mazeTiles[4, 23].BackColor = Color.Black;
         }
+        /// <summary>
+        /// node class that solves the maze in a breadthfirst algorithm way.
+        /// </summary>
         public class Node
         {
             private List<Node> path;
@@ -136,17 +172,19 @@ namespace Maze
                         end();
                     }
                     right();
-                    top();
-                    bottom();
+                    bottom();                   
                     left();
+                    top();
                 }
             }
             
             private void right()
             {
-                if (xPos != 24)
+                if (xPos != XTILES -1)
                 {
-                    if (!(path.Exists(r => r.xPos == this.xPos + 1) && path.Exists(r => r.yPos == this.yPos)) && mazeTiles[xPos + 1, yPos].BackColor != Color.Black)
+                    if (!(path.Exists(r => r.xPos == this.xPos + 1) &&
+                        path.Exists(r => r.yPos == this.yPos)) &&
+                        mazeTiles[xPos + 1, yPos].BackColor != Color.Black)
                     {
                         Node neue = new Node(xPos + 1, yPos, path);
                         neue.run();
@@ -154,9 +192,11 @@ namespace Maze
                 }
             }
             private void bottom() {
-                if (yPos != 24)
+                if (yPos != YTILES -1)
                 {
-                    if (!(path.Exists(r => r.xPos == this.xPos) && path.Exists(r => r.yPos == this.yPos + 1)) && mazeTiles[xPos, yPos + 1].BackColor != Color.Black)
+                    if (!(path.Exists(r => r.xPos == this.xPos) &&
+                        path.Exists(r => r.yPos == this.yPos + 1)) &&
+                        mazeTiles[xPos, yPos + 1].BackColor != Color.Black)
                     {
                         Node neue = new Node(xPos, yPos + 1, path);
                         neue.run();
@@ -166,7 +206,9 @@ namespace Maze
             private void left() {
                 if (xPos != 0)
                 {
-                    if (!(path.Exists(r => r.xPos == this.xPos - 1) && path.Exists(r => r.yPos == this.yPos)) && mazeTiles[xPos - 1, yPos].BackColor != Color.Black)
+                    if (!(path.Exists(r => r.xPos == this.xPos - 1) &&
+                        path.Exists(r => r.yPos == this.yPos)) &&
+                        mazeTiles[xPos - 1, yPos].BackColor != Color.Black)
                     {
                         Node neue = new Node(xPos - 1, yPos, path);
                         neue.run();
@@ -176,7 +218,9 @@ namespace Maze
             private void top() {
                 if (yPos != 0)
                 {
-                    if (!(path.Exists(r => r.xPos == this.xPos) && path.Exists(r => r.yPos == this.yPos - 1)) && mazeTiles[xPos, yPos - 1].BackColor != Color.Black)
+                    if (!(path.Exists(r => r.xPos == this.xPos) &&
+                        path.Exists(r => r.yPos == this.yPos - 1)) &&
+                        mazeTiles[xPos, yPos - 1].BackColor != Color.Black)
                     {
                         Node neue = new Node(xPos, yPos - 1, path);
                         neue.run();

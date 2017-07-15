@@ -80,7 +80,7 @@ namespace Maze
                         mazeTiles[i, j].BackColor = Color.White;
                 }
             }
-            //mazeTiles[4, 23].BackColor = Color.Black;
+            //mazeTiles[4, 23].BackColor = Color.Black; // where 4 is Xposition and 23 is Y position
         }
 
         /// <summary>
@@ -114,62 +114,58 @@ namespace Maze
         }
 
         /// <summary>
-        /// Solve_click activates the event depth first algorithm which solves the maze.
+        /// Solve_click activates the event breath first algorithm which solves the maze.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         /// 
         private void Solve_Click(object sender, EventArgs e)
-        {
-            //Create a previously searched array           
+        {                     
             Node first = new Node(0, 0, null);
             Queue<Node> searchqueue = new Queue<Node>();
             bool[,] alreadySearched = new bool[XTILES, YTILES];
             searchqueue.Enqueue(first);
-            while (searchqueue.Peek() != null)
+            while (searchqueue.Any())
             {
-                Node current = searchqueue.Dequeue();
-                bool shouldcheck = true;
+                Node current = searchqueue.Dequeue();               
                 if (current.xPos == XTILES -1 && current.yPos == YTILES -1)
                 {
-                    
+                    current = current.previous;
                     while (current.previous != null)
-		            {
-                        if (current.xPos != XTILES - 1 || current.yPos != YTILES - 1)
-                            mazeTiles[current.xPos, current.yPos].BackColor = Color.Red;
+		            {                                                                       
+                        mazeTiles[current.xPos, current.yPos].BackColor = Color.Red;
                         current = current.previous;
                     }
-                    break;
+                    return; // returns the way of the maze.
                 }
-                if (alreadySearched[current.xPos, current.yPos])
-                    shouldcheck = false;
-
-                
-                if (current.xPos != XTILES - 1 && mazeTiles[current.xPos + 1, current.yPos].BackColor != Color.Black && shouldcheck) // right position
-                {
-                    alreadySearched[current.xPos, current.yPos] = true;
+                              
+                if (current.xPos != XTILES - 1 && mazeTiles[current.xPos + 1, current.yPos].BackColor != Color.Black && !alreadySearched[current.xPos + 1, current.yPos]) // checks right position
+                {                    
                     Node next = new Node(current.xPos + 1, current.yPos, current);
+                    alreadySearched[next.xPos, next.yPos] = true;
                     searchqueue.Enqueue(next);
                 }
-                if (current.yPos != YTILES - 1 && mazeTiles[current.xPos, current.yPos + 1].BackColor != Color.Black && shouldcheck) // bottom position
-                {
-                    alreadySearched[current.xPos, current.yPos] = true;
+                if (current.yPos != YTILES - 1 && mazeTiles[current.xPos, current.yPos + 1].BackColor != Color.Black && !alreadySearched[current.xPos, current.yPos + 1]) // checks bottom position
+                {                   
                     Node next = new Node(current.xPos, current.yPos + 1, current);
+                    alreadySearched[next.xPos, next.yPos] = true;
                     searchqueue.Enqueue(next);
                 }
-                if (current.xPos > 0 && mazeTiles[current.xPos - 1, current.yPos].BackColor != Color.Black && shouldcheck) // left position
-                {
-                    alreadySearched[current.xPos, current.yPos] = true;
+                if (current.xPos > 0 && mazeTiles[current.xPos - 1, current.yPos].BackColor != Color.Black && !alreadySearched[current.xPos - 1, current.yPos]) // checks left position
+                {                   
                     Node next = new Node(current.xPos - 1, current.yPos, current);
+                    alreadySearched[next.xPos, next.yPos] = true;
                     searchqueue.Enqueue(next);
                 }
-                if (current.yPos > 0 && mazeTiles[current.xPos, current.yPos - 1].BackColor != Color.Black && shouldcheck) // top position
-                {
-                    alreadySearched[current.xPos, current.yPos] = true;
+                if (current.yPos > 0 && mazeTiles[current.xPos, current.yPos - 1].BackColor != Color.Black && !alreadySearched[current.xPos, current.yPos - 1]) // checks top position
+                {                    
                     Node next = new Node(current.xPos, current.yPos - 1, current);
+                    alreadySearched[next.xPos, next.yPos] = true;
                     searchqueue.Enqueue(next);
                 }        
-            }            
+            }
+            // if maze cannot be solved.
+            MessageBox.Show("No solution is found ;(");         
         }
         /// <summary>
         /// Removes the color which was left after using button1.
@@ -192,23 +188,6 @@ namespace Maze
             //Reset start and finish to light blue
             mazeTiles[0, 0].BackColor = Color.LightBlue;
             mazeTiles[XTILES - 1, YTILES - 1].BackColor = Color.LightBlue;
-        }
-        /// <summary>
-        /// node class that we use in the depth-first algorithm way.
-        /// </summary>
-        public class Node
-        {      
-            public int xPos;
-            public int yPos;
-            public Node previous;
-            //bool[,] alreadySearched = new bool[XTILES, YTILES];
-            public Node(int x, int y, Node previous)
-            {
-                xPos = x;
-                yPos = y;
-                this.previous = previous;                                              
-            }
-                       
         }
     }
 }

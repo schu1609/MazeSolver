@@ -28,77 +28,82 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.pictureBox2 = new System.Windows.Forms.PictureBox();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
+            this.White = new System.Windows.Forms.PictureBox();
+            this.Black = new System.Windows.Forms.PictureBox();
+            this.Solve = new System.Windows.Forms.Button();
+            this.Reset = new System.Windows.Forms.Button();
+            ((System.ComponentModel.ISupportInitialize)(this.White)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Black)).BeginInit();
             this.SuspendLayout();
             // 
-            // pictureBox1
+            // White
             // 
-            this.pictureBox1.BackColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.pictureBox1.Location = new System.Drawing.Point(150, 12);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(56, 23);
-            this.pictureBox1.TabIndex = 0;
-            this.pictureBox1.TabStop = false;
-            this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
+            this.White.BackColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.White.Location = new System.Drawing.Point(112, 10);
+            this.White.Margin = new System.Windows.Forms.Padding(2);
+            this.White.Name = "White";
+            this.White.Size = new System.Drawing.Size(42, 19);
+            this.White.TabIndex = 0;
+            this.White.TabStop = false;
+            this.White.Click += new System.EventHandler(this.White_Click);
             // 
-            // pictureBox2
+            // Black
             // 
-            this.pictureBox2.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.pictureBox2.Location = new System.Drawing.Point(212, 12);
-            this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(58, 23);
-            this.pictureBox2.TabIndex = 1;
-            this.pictureBox2.TabStop = false;
-            this.pictureBox2.Click += new System.EventHandler(this.pictureBox2_Click);
+            this.Black.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.Black.Location = new System.Drawing.Point(159, 10);
+            this.Black.Margin = new System.Windows.Forms.Padding(2);
+            this.Black.Name = "Black";
+            this.Black.Size = new System.Drawing.Size(44, 19);
+            this.Black.TabIndex = 1;
+            this.Black.TabStop = false;
+            this.Black.Click += new System.EventHandler(this.Black_Click);
             // 
-            // button1
+            // Solve
             // 
-            this.button1.Location = new System.Drawing.Point(13, 12);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(64, 23);
-            this.button1.TabIndex = 2;
-            this.button1.Text = "Solve";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.Solve.Location = new System.Drawing.Point(10, 10);
+            this.Solve.Margin = new System.Windows.Forms.Padding(2);
+            this.Solve.Name = "Solve";
+            this.Solve.Size = new System.Drawing.Size(48, 19);
+            this.Solve.TabIndex = 2;
+            this.Solve.Text = "Solve";
+            this.Solve.UseVisualStyleBackColor = true;
+            this.Solve.Click += new System.EventHandler(this.Solve_Click);
             // 
-            // button2
+            // Reset
             // 
-            this.button2.Location = new System.Drawing.Point(83, 12);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(61, 23);
-            this.button2.TabIndex = 3;
-            this.button2.Text = "Reset";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.Reset.Location = new System.Drawing.Point(62, 10);
+            this.Reset.Margin = new System.Windows.Forms.Padding(2);
+            this.Reset.Name = "Reset";
+            this.Reset.Size = new System.Drawing.Size(46, 19);
+            this.Reset.TabIndex = 3;
+            this.Reset.Text = "Reset";
+            this.Reset.UseVisualStyleBackColor = true;
+            this.Reset.Click += new System.EventHandler(this.Reset_Click);
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(622, 433);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.pictureBox2);
-            this.Controls.Add(this.pictureBox1);
+            this.ClientSize = new System.Drawing.Size(466, 352);
+            this.Controls.Add(this.Reset);
+            this.Controls.Add(this.Solve);
+            this.Controls.Add(this.Black);
+            this.Controls.Add(this.White);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form1";
             this.Text = "Form1";
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.White)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Black)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.PictureBox pictureBox2;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.PictureBox White;
+        private System.Windows.Forms.PictureBox Black;
+        private System.Windows.Forms.Button Solve;
+        private System.Windows.Forms.Button Reset;
     }
 }
 

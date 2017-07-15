@@ -22,7 +22,6 @@ namespace Maze
         private static int XTILES = 25; //Number of X tiles
         private static int YTILES = 25; //Number of Y tiles
         private int TILESIZE = 10; //Size of the tiles (pixles)
-        private static bool active = false;
         private static PictureBox[,] mazeTiles;
         /// <summary>
         /// The constructer which starts the components which are needed for the maze.
@@ -34,30 +33,14 @@ namespace Maze
             Maze();
         }
         /// <summary>
-        /// The place where you can pick the color white for the maze.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void pictureBox1_Click(object sender, EventArgs e)
-        {
-            currentcolor = Color.White;
-        }
-        /// <summary>
-        /// the place where you can pick the color black for the maze.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void pictureBox2_Click(object sender, EventArgs e)
-        {
-            currentcolor = Color.Black;
-        }
-        /// <summary>
         /// the  playground is getting made.
         /// </summary>
         private void createNewMaze()
         {
             mazeTiles = new PictureBox[XTILES, YTILES];
             //Loop for getting all tiles
+            int offsetx = 13;
+            int offsety = 45;
             for (int i = 0; i < XTILES; i++)
             {
                 for (int j = 0; j < YTILES; j++)
@@ -65,8 +48,8 @@ namespace Maze
                     //initialize a new PictureBox array at cordinate XTILES, YTILES
                     mazeTiles[i, j] = new PictureBox();
                     //calculate size and location
-                    int xPosition = (i * TILESIZE) + 13; //13 is padding from left
-                    int yPosition = (j * TILESIZE) + 45; //45 is padding from top
+                    int xPosition = (i * TILESIZE) + offsetx; // padding from left
+                    int yPosition = (j * TILESIZE) + offsety; // padding from top
                     mazeTiles[i, j].SetBounds(xPosition, yPosition, TILESIZE, TILESIZE);
                     //make top left and right bottom corner light blue. Used for start and finish
                     if ((i == 0 && j == 0) || (i == XTILES - 1 && j == YTILES - 1))
@@ -85,6 +68,42 @@ namespace Maze
             }
         }
         /// <summary>
+        /// method which creates the maze in code.
+        /// </summary>
+        public void Maze()
+        {
+            for (int i = 0; i < XTILES; i++)
+            {
+                for (int j = 0; j < YTILES; j++)
+                {
+                    if (mazeTiles[i, j].BackColor == Color.Black)
+                        mazeTiles[i, j].BackColor = Color.White;
+                }
+            }
+            //mazeTiles[4, 23].BackColor = Color.Black;
+        }
+
+        /// <summary>
+        /// The place where you can pick the color white for the maze.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void White_Click(object sender, EventArgs e)
+        {
+            currentcolor = Color.White;
+        }
+
+        /// <summary>
+        /// the place where you can pick the color black for the maze.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Black_Click(object sender, EventArgs e)
+        {
+            currentcolor = Color.Black;
+        }
+
+        /// <summary>
         /// picturebox are the maze tiles which you can change into the color you have chosen from picturebox2 and picturebox1.
         /// </summary>
         /// <param name="sender"></param>
@@ -93,29 +112,64 @@ namespace Maze
         {
             ((PictureBox)sender).BackColor = currentcolor;
         }
+
         /// <summary>
-        /// button1 activates the event of the Node class which solves the maze.
+        /// Solve_click activates the event depth first algorithm which solves the maze.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         /// 
-        private void button1_Click(object sender, EventArgs e)
+        private void Solve_Click(object sender, EventArgs e)
         {
-            //Create a previously searched array
-            active = true;
+            //Create a previously searched array           
+            Node first = new Node(0, 0, null);
+            Queue<Node> searchqueue = new Queue<Node>();
             bool[,] alreadySearched = new bool[XTILES, YTILES];
-
-            Node first = new Node(0, 0, new List<Node>());
-            first.run();
+            searchqueue.Enqueue(first);
+            while (searchqueue.Peek() != null)
+            {
+                Node current = searchqueue.Dequeue();
+                
+                if (current.xPos == XTILES -1 && current.yPos == YTILES -1)
+                {
+                    
+                    while (current.previous != null)
+		            {
+                        mazeTiles[current.xPos, current.yPos].BackColor = Color.Red;
+                        current = current.previous;
+                    }
+                    break;
+                }
+                if (current.xPos != XTILES - 1 && mazeTiles[current.xPos + 1, current.yPos].BackColor != Color.Black) // right position
+                {
+                    Node next = new Node(current.xPos + 1, current.yPos, current);
+                    searchqueue.Enqueue(next);
+                }
+                else if (current.yPos != YTILES - 1 && mazeTiles[current.xPos, current.yPos + 1].BackColor != Color.Black) // bottom position
+                {
+                    Node next = new Node(current.xPos, current.yPos + 1, current);
+                    searchqueue.Enqueue(next);
+                }
+                else if (current.xPos > 0 && mazeTiles[current.xPos - 1, current.yPos].BackColor != Color.Black) // left position
+                {
+                    Node next = new Node(current.xPos - 1, current.yPos, current);
+                    searchqueue.Enqueue(next);
+                }
+                else if (current.yPos > 0 && mazeTiles[current.xPos, current.yPos - 1].BackColor != Color.Black) // top position
+                {
+                    Node next = new Node(current.xPos, current.yPos - 1, current);
+                    searchqueue.Enqueue(next);
+                }
+            }            
         }
         /// <summary>
         /// Removes the color which was left after using button1.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void button2_Click(object sender, EventArgs e)
+        private void Reset_Click(object sender, EventArgs e)
         {
-            //Change all greay tiles to white
+            //Change all gray and red tiles to white
             for (int i = 0; i < XTILES; i++)
             {
                 for (int j = 0; j < YTILES; j++)
@@ -131,110 +185,21 @@ namespace Maze
             mazeTiles[XTILES - 1, YTILES - 1].BackColor = Color.LightBlue;
         }
         /// <summary>
-        /// method which creates the maze in code.
-        /// </summary>
-        public void Maze()
-        {
-            for (int i = 0; i < XTILES; i++)
-            {
-                for (int j = 0; j < YTILES; j++)
-                {
-                    if (mazeTiles[i, j].BackColor == Color.Black)
-                        mazeTiles[i, j].BackColor = Color.White;
-                }
-            }
-            //mazeTiles[4, 23].BackColor = Color.Black;
-        }
-        /// <summary>
-        /// node class that solves the maze in a breadthfirst algorithm way.
+        /// node class that we use in the depth-first algorithm way.
         /// </summary>
         public class Node
-        {
-            private List<Node> path;
-            private int xPos;
-            private int yPos;
-
-            public Node(int x, int y, List<Node>p)
+        {      
+            public int xPos;
+            public int yPos;
+            public Node previous;
+            //bool[,] alreadySearched = new bool[XTILES, YTILES];
+            public Node(int x, int y, Node previous)
             {
                 xPos = x;
                 yPos = y;
-                path = p;
-                p.Add(this);
+                this.previous = previous;                                              
             }
-
-            public void run()
-            {
-                if (active)
-                {
-                    mazeTiles[xPos, yPos].BackColor = Color.Blue;
-                    if (xPos == XTILES-1 && yPos == YTILES-1)
-                    {
-                        end();
-                    }
-                    right();
-                    bottom();                   
-                    left();
-                    top();
-                }
-            }
-            
-            private void right()
-            {
-                if (xPos != XTILES -1)
-                {
-                    if (!(path.Exists(r => r.xPos == this.xPos + 1) &&
-                        path.Exists(r => r.yPos == this.yPos)) &&
-                        mazeTiles[xPos + 1, yPos].BackColor != Color.Black)
-                    {
-                        Node neue = new Node(xPos + 1, yPos, path);
-                        neue.run();
-                    }
-                }
-            }
-            private void bottom() {
-                if (yPos != YTILES -1)
-                {
-                    if (!(path.Exists(r => r.xPos == this.xPos) &&
-                        path.Exists(r => r.yPos == this.yPos + 1)) &&
-                        mazeTiles[xPos, yPos + 1].BackColor != Color.Black)
-                    {
-                        Node neue = new Node(xPos, yPos + 1, path);
-                        neue.run();
-                    }
-                }
-            }
-            private void left() {
-                if (xPos != 0)
-                {
-                    if (!(path.Exists(r => r.xPos == this.xPos - 1) &&
-                        path.Exists(r => r.yPos == this.yPos)) &&
-                        mazeTiles[xPos - 1, yPos].BackColor != Color.Black)
-                    {
-                        Node neue = new Node(xPos - 1, yPos, path);
-                        neue.run();
-                    }
-                }
-            }
-            private void top() {
-                if (yPos != 0)
-                {
-                    if (!(path.Exists(r => r.xPos == this.xPos) &&
-                        path.Exists(r => r.yPos == this.yPos - 1)) &&
-                        mazeTiles[xPos, yPos - 1].BackColor != Color.Black)
-                    {
-                        Node neue = new Node(xPos, yPos - 1, path);
-                        neue.run();
-                    }
-                }
-            }
-            private void end()
-            {
-                active = false;
-                foreach (Node z in path)
-                {
-                    mazeTiles[z.xPos, z.yPos].BackColor = Color.Red;
-                }
-            }            
+                       
         }
     }
 }

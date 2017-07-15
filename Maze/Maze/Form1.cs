@@ -129,37 +129,46 @@ namespace Maze
             while (searchqueue.Peek() != null)
             {
                 Node current = searchqueue.Dequeue();
-                
+                bool shouldcheck = true;
                 if (current.xPos == XTILES -1 && current.yPos == YTILES -1)
                 {
                     
                     while (current.previous != null)
 		            {
-                        mazeTiles[current.xPos, current.yPos].BackColor = Color.Red;
+                        if (current.xPos != XTILES - 1 || current.yPos != YTILES - 1)
+                            mazeTiles[current.xPos, current.yPos].BackColor = Color.Red;
                         current = current.previous;
                     }
                     break;
                 }
-                if (current.xPos != XTILES - 1 && mazeTiles[current.xPos + 1, current.yPos].BackColor != Color.Black) // right position
+                if (alreadySearched[current.xPos, current.yPos])
+                    shouldcheck = false;
+
+                
+                if (current.xPos != XTILES - 1 && mazeTiles[current.xPos + 1, current.yPos].BackColor != Color.Black && shouldcheck) // right position
                 {
+                    alreadySearched[current.xPos, current.yPos] = true;
                     Node next = new Node(current.xPos + 1, current.yPos, current);
                     searchqueue.Enqueue(next);
                 }
-                else if (current.yPos != YTILES - 1 && mazeTiles[current.xPos, current.yPos + 1].BackColor != Color.Black) // bottom position
+                if (current.yPos != YTILES - 1 && mazeTiles[current.xPos, current.yPos + 1].BackColor != Color.Black && shouldcheck) // bottom position
                 {
+                    alreadySearched[current.xPos, current.yPos] = true;
                     Node next = new Node(current.xPos, current.yPos + 1, current);
                     searchqueue.Enqueue(next);
                 }
-                else if (current.xPos > 0 && mazeTiles[current.xPos - 1, current.yPos].BackColor != Color.Black) // left position
+                if (current.xPos > 0 && mazeTiles[current.xPos - 1, current.yPos].BackColor != Color.Black && shouldcheck) // left position
                 {
+                    alreadySearched[current.xPos, current.yPos] = true;
                     Node next = new Node(current.xPos - 1, current.yPos, current);
                     searchqueue.Enqueue(next);
                 }
-                else if (current.yPos > 0 && mazeTiles[current.xPos, current.yPos - 1].BackColor != Color.Black) // top position
+                if (current.yPos > 0 && mazeTiles[current.xPos, current.yPos - 1].BackColor != Color.Black && shouldcheck) // top position
                 {
+                    alreadySearched[current.xPos, current.yPos] = true;
                     Node next = new Node(current.xPos, current.yPos - 1, current);
                     searchqueue.Enqueue(next);
-                }
+                }        
             }            
         }
         /// <summary>
@@ -174,7 +183,7 @@ namespace Maze
             {
                 for (int j = 0; j < YTILES; j++)
                 {
-                    Color[] clean = { Color.Gray, Color.Blue, Color.Red };
+                    Color[] clean = { Color.Gray, Color.Red };
                     if (clean.Contains(mazeTiles[i, j].BackColor))
                         mazeTiles[i, j].BackColor = Color.White;
                 }

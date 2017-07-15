@@ -18,5 +18,6 @@ namespace Maze
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());
         }
+        // gemaakt door emiel en leon
     }
 }
